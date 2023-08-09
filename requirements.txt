@@ -1,2 +1,4 @@
 docker==2.5.1
 flask-lambda==0.0.4
+flask==2.1.3
+werkzeug==2.0.3

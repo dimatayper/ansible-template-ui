@@ -1,6 +1,9 @@
 # ansible-template-ui
 Web UI for testing ansible templates
 
+## New UI
+![NEW UI](./media/new_ui.png)
+
 ## Docker Container
 
 ### Pull
