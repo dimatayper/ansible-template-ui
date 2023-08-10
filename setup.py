@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright 2017-2018 Matt Martz
+# Copyright 2023 Dmitry Titov
 # All Rights Reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -15,51 +16,42 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import codecs
 import os
 import re
-
 from setuptools import find_packages, setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 
 
-# Read the version number from a source file.
-# Why read it, and not import?
-# see https://groups.google.com/d/topic/pypa-dev/0PkjVpcxTzQ/discussion
-def find_version(*file_paths):
-    # Open in Latin-1 so that we avoid encoding errors.
-    # Use codecs.open for Python 2 compatibility
-    try:
-        f = codecs.open(os.path.join(here, *file_paths), 'r', 'latin1')
-        version_file = f.read()
-        f.close()
-    except:
-        raise RuntimeError("Unable to find version string.")
+def read_file(file_path, encoding='utf-8'):
+    """Utility function to read a file."""
+    with open(file_path, 'r', encoding=encoding) as f:
+        return f.read()
 
-    # The version line must have the form
-    # __version__ = 'ver'
-    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
-                              version_file, re.M)
+
+def find_version(*file_paths):
+    """Extract the version from the given file."""
+    version_file = read_file(os.path.join(here, *file_paths), 'latin1')
+
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", version_file, re.M)
     if version_match:
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
 
-# Get the long description from the relevant file
-try:
-    f = codecs.open('README.rst', encoding='utf-8')
-    long_description = f.read()
-    f.close()
-except:
-    long_description = ''
+# Get the long description from the README
+long_description = ''
+requirements = []
 
 try:
-    f = codecs.open('requirements.txt', encoding='utf-8')
-    requirements = f.read().splitlines()
-    f.close()
-except:
-    requirements = []
+    long_description = read_file('README.rst')
+except FileNotFoundError:
+    pass
+
+try:
+    requirements = read_file('requirements.txt').splitlines()
+except FileNotFoundError:
+    pass
 
 
 setup(
@@ -68,15 +60,13 @@ setup(
     description='Web UI for testing ansible templates',
     long_description=long_description,
     keywords='ansible jinja jinja2 template ansible-template-ui',
-    author='Matt Martz',
-    author_email='matt@sivel.net',
+    author='Matt Martz, Dmitry Titov',
+    author_email='matt@sivel.net, pointtitov@yandex.com',
     url='https://github.com/sivel/ansible-template-ui',
     license='Apache License, Version 2.0',
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=requirements,
     package_data={
-        '': [
-            'client/*',
-        ]
+        '': ['client/*']
     },
 )
