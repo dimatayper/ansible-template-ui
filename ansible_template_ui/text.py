@@ -1,28 +1,13 @@
-import sys
+import six
 
-PY3 = sys.version_info[0] == 3
+def b(s):
+    if isinstance(s, six.text_type):
+        return s.encode('utf-8')
+    return s
 
-if PY3:
-    def b(s):
-        if not isinstance(s, bytes):
-            return s.encode('utf-8')
-        return s
+def u(s):
+    if isinstance(s, six.binary_type):
+        return s.decode('utf-8')
+    return s
 
-    def u(s):
-        if not isinstance(s, str):
-            return s.decode('utf-8')
-        return s
-
-    native = u
-else:
-    def b(s):
-        if not isinstance(s, str):
-            return s.encode('utf-8')
-        return s
-
-    def u(s):
-        if not isinstance(s, unicode):
-            return s.decode('utf-8')
-        return s
-
-    native = b
+native = u if six.PY3 else b
